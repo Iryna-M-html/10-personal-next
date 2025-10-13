@@ -4,6 +4,8 @@ import { useEffect } from 'react';
 
 import { getUserInfo } from '@/lib/service/opencagedataApi';
 
+import { Coordinates } from '../../lib/service/opencagedataApi';
+
 export default function GeolocationChecker() {
   useEffect(() => {
     const options = {
@@ -13,7 +15,10 @@ export default function GeolocationChecker() {
     };
 
     const success = async ({ coords }: GeolocationPosition) => {
-      const data = await getUserInfo(coords);
+      const data = await getUserInfo({
+        latitude: coords.latitude,
+        longitude: coords.longitude,
+      });
       return data.results[0].annotations.currency.iso_code;
     };
 
