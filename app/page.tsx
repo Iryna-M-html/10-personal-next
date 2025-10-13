@@ -13,14 +13,15 @@ export default function Home() {
     <main className={css.main}>
       <Section>
         <Container>
-          <Heading info title="What currencies do you want to exchange?🙂" />
+          <p className={css.p}>Hello</p>
+          {/* <Heading info title="What currencies do you want to exchange?🙂" />
 
           {isError && (
             <Heading
               error
               title="Something went wrong...😐 Check the data validity and try again!"
             />
-          )}
+          )} */}
         </Container>
       </Section>
     </main>
