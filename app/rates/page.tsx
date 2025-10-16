@@ -17,7 +17,6 @@ export default function RatesPage() {
     <main className={css.main}>
       <Section>
         <Container>
-          <RatesList />
           <Heading
             info
             bottom
@@ -29,6 +28,7 @@ export default function RatesPage() {
               />
             }
           />
+          <RatesList />
           {/* {isError && (
             <Heading error title="Something went wrong...😐 We cannot show current rates!" />
           )} */}
