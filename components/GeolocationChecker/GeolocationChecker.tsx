@@ -1,17 +1,18 @@
 'use client';
 
 import { useEffect } from 'react';
-import dynamic from 'next/dynamic';
+
 import { getUserInfo } from '@/lib/service/opencagedataApi';
 import { useCurrencyStore } from '@/lib/stores/currencyStore';
-// import { Coordinates } from '../../lib/service/opencagedataApi';
 
 export default function GeolocationChecker() {
-  const { currency, setCurrency, initialized, setInitialized } = useCurrencyStore();
+  const baseCurrency = useCurrencyStore((state) => state.baseCurrency);
+  // const { baseCurrency } = useCurrencyStore();
+  const setBaseCurrency = useCurrencyStore((state) => state.setBaseCurrency);
+  const hasHydrated = useCurrencyStore((state) => state.hasHydrated);
 
   useEffect(() => {
-    // ✅ выполняем только при первом запуске и если не было инициализации
-    if (initialized || currency) return;
+    if (!hasHydrated || baseCurrency) return;
 
     const options = {
       enableHighAccuracy: true,
@@ -20,30 +21,17 @@ export default function GeolocationChecker() {
     };
 
     const success = async ({ coords }: GeolocationPosition) => {
-      try {
-        // ✅ лениво загружаем модуль (ВАЖНО!)
-        const { getUserInfo } = await import('@/lib/service/opencagedataApi');
-        const data = await getUserInfo({
-          latitude: coords.latitude,
-          longitude: coords.longitude,
-        });
-
-        const iso = data.results[0]?.annotations?.currency?.iso_code;
-        if (iso) {
-          setCurrency(iso);
-          localStorage.setItem('user_currency', iso); // ✅ сохраняем валюту
-        }
-      } catch (e) {
-        console.error('Failed to fetch user currency:', e);
-      } finally {
-        setInitialized(true); // ✅ отмечаем, что геолокация уже выполнена
-      }
+      const data = await getUserInfo(coords);
+      setBaseCurrency(data.results[0].annotations.currency.iso_code);
+      return data.results;
     };
 
-    const error = () => setInitialized(true);
+    const error = () => {
+      setBaseCurrency('USD');
+    };
 
     navigator.geolocation.getCurrentPosition(success, error, options);
-  }, [initialized, currency, setCurrency, setInitialized]);
+  }, [baseCurrency, setBaseCurrency, hasHydrated]);
 
   return null;
 }

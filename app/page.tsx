@@ -5,31 +5,34 @@ import Container from '@/components/Container/Container';
 import Heading from '@/components/Heading/Heading';
 import ExchangeForm from '@/components/ExchangeForm/ExchangeForm';
 import ExchangeInfo from '@/components/ExchangeInfo/ExchangeInfo';
-import dynamic from 'next/dynamic';
 
 import css from './page.module.css';
-const GeolocationChecker = dynamic(
-  () => import('@/components/GeolocationChecker/GeolocationChecker'),
-  { ssr: false }
-);
-const SelectRates = dynamic(() => import('@/components/SelectRates/SelectRates'), { ssr: false });
-export default function Home() {
-  const isError = false;
+import { useCurrencyStore } from '@/lib/stores/currencyStore';
+import Loader from '@/components/Loader/Loader';
 
+export default function Home() {
+  const isError = useCurrencyStore((state) => state.isError);
+  const isLoading = useCurrencyStore((state) => state.isLoading);
+  const exchangeInfo = useCurrencyStore((state) => state.exchangeInfo);
+  console.log(exchangeInfo);
   return (
     <main className={css.main}>
       <Section>
         <Container>
-          <Heading info title="What currencies do you want to exchange?🙂" />
-
+          <ExchangeForm />
+          {!isError && !exchangeInfo && (
+            <Heading info title="What currencies do you want to exchange?🙂" />
+          )}
+          {exchangeInfo && <ExchangeInfo {...exchangeInfo} />}
+          {isLoading && <Loader />}
           {isError && (
             <Heading
               error
               title="Something went wrong...😐 Check the data validity and try again!"
             />
           )}
-          <ExchangeForm />
-          <ExchangeInfo />
+
+          {/* <ExchangeInfo  /> */}
         </Container>
       </Section>
     </main>

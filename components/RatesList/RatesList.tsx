@@ -1,38 +1,30 @@
+import { ReactElement } from 'react';
+
 import styles from './RatesList.module.css';
-import { getCurrenciesList } from '../../lib/service/exchangeAPI';
-// import { useStore, type StoreState } from '../../lib/stores/zustandStore';
-// export default function RatesList() {
-//   const { rates, baseCurrency, filter } = useStore((state: StoreState) => ({
-//     rates: state.rates,
-//     baseCurrency: state.baseCurrency,
-//     filter: state.filter,
-//   }));
+import Grid from '../Grid/Grid';
+import GridItem from '../GridItem/GridItem';
 
-//   const filteredRates = Object.entries(rates)
-//     .filter(([key]) => key !== baseCurrency && key.toLowerCase().includes(filter))
-//     .map(([key, value]) => ({ key, value: (1 / value).toFixed(2) }));
+interface Rate {
+  key: string;
+  value: number;
+}
 
-//   return (
-//     <ul className={styles.list}>
-//       {filteredRates.map(({ key, value }) => (
-//         <li key={key} className={styles.item}>
-//           <span className={styles.text}>{key}</span>
-//           <span className={styles.text}>{value}</span>
-//         </li>
-//       ))}
-//     </ul>
-//   );
-// }
-export default function RatesList() {
+interface RatesListProps {
+  rates: Rate[];
+}
+
+export default function RatesList({ rates }: RatesListProps): ReactElement {
+  console.log(rates);
+
   return (
-    <ul className={styles.list}>
-      {Object.entries(getCurrenciesList).map(([key, value]) => (
-        <li className={styles.item} key={key}>
+    <Grid>
+      {rates.map(({ key, value }) => (
+        <GridItem key={key}>
           <p className={styles.text}>
             1 {key} = {value}
           </p>
-        </li>
+        </GridItem>
       ))}
-    </ul>
+    </Grid>
   );
 }
