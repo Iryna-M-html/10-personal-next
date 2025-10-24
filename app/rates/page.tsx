@@ -29,25 +29,26 @@ export default function RatesPage() {
       .filter(([key]) => key !== baseCurrency && key.toLowerCase().includes(filter.toLowerCase()))
       .map(([key, value]) => ({ key, value: Number((1 / value).toFixed(2)) }));
   }, [rates, baseCurrency, filter]);
-useEffect(() => {
-  if (!baseCurrency) return;
+  useEffect(() => {
+    if (!baseCurrency) return;
 
-  setisLoading(true);
+    setisLoading(true);
 
-  latestRates(baseCurrency)
-    .then((data) => {
-      setRates(data);
-    })
-    .catch((err) => {
-      console.error(err);
-      setisError('Failed to fetch rates.');
-    })
-    .finally(() => {
-      setisLoading(false);
-    });
-}, [baseCurrency, setRates, setisLoading, setisError]);
+    latestRates(baseCurrency)
+      .then((data) => {
+        setRates(data);
+      })
+      .catch((err) => {
+        console.error(err);
+        setisError('Failed to fetch rates.');
+      })
+      .finally(() => {
+        setisLoading(false);
+      });
+  }, [baseCurrency, setRates, setisLoading, setisError]);
 
-if (!baseCurrency) return <Loader />;
+  if (!baseCurrency) return <Loader />;
+  if (isLoading) return <Loader />;
   return (
     <main className={css.main}>
       <Section>
@@ -64,7 +65,7 @@ if (!baseCurrency) return <Loader />;
             }
           />
           {rates.length > 0 && <Filter />}
-          {filtereRates.length > 0 && <RatesList rates={filtereRates}/>}
+          {filtereRates.length > 0 && <RatesList rates={filtereRates} />}
           {isError && (
             <Heading error title="Something went wrong...😐 We cannot show current rates!" />
           )}
